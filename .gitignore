@@ -3,6 +3,9 @@
 .lift
 *.iml
 
+build
+.gradle
+
 # Compiled class file
 *.class
 
@@ -17,6 +20,9 @@
 
 # Package Files #
 *.jar
+# Include JAR files in gradle and libs folders
+!/gradle/*
+!/libs/*
 *.war
 *.nar
 *.ear
