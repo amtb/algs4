@@ -1,5 +1,6 @@
 plugins {
   id 'java'
+  id 'com.adarshr.test-logger' version '2.1.1'
 }
 
 group 'org.algs4.playground'
@@ -30,5 +31,6 @@ sourceSets {
 dependencies {
   implementation files('../libs/algs4.jar')
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.0'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

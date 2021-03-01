@@ -6,16 +6,16 @@
 
 package sorts;
 
-public class Insertion {
-  public static void sort(Comparable[] array) {
-    for (int i = 0; i < array.length; i++) {
-      for (int j = i; j > 0; j--) {
-        if (Utils.isLessThan(array[j], array[j-1])) {
-          Utils.swap(array, j, j-1);
-        } else {
-          break;
-        }
-      }
+import edu.princeton.cs.algs4.StdRandom;
+
+public class RandomArray {
+
+  public static Integer[] generate(int size) {
+    Integer[] array = new Integer[size];
+    for (int i = 0; i < size; i++) {
+      array[i] = i;
     }
+    StdRandom.shuffle(array);
+    return array;
   }
 }
