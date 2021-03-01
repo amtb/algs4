@@ -9,19 +9,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BruteCollinearPoints {
+  private final Point[] points;
   // the segments
   private final LineSegment[] segments;
 
   // finds all line segments containing 4 points
   public BruteCollinearPoints(Point[] points) {
     validate(points);
-    Arrays.sort(points);
-    validateUniques(points);
-    this.segments = computeSegments(points.clone());
+    // make a copy
+    this.points = points.clone();
+    Arrays.sort(this.points);
+    validateUniques(this.points);
+    this.segments = computeSegments();
   }
 
   // computes the segments (bruteforce)
-  private LineSegment[] computeSegments(Point[] points) {
+  private LineSegment[] computeSegments() {
     List<LineSegment> lineSegments = new ArrayList<>();
     int numberOfPoints = points.length;
     for (int i = 0; i < numberOfPoints; i++) {
@@ -79,6 +82,6 @@ public class BruteCollinearPoints {
 
   // the line segments
   public LineSegment[] segments() {
-    return Arrays.copyOf(segments, segments.length);
+    return segments.clone();
   }
 }
