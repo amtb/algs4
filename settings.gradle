@@ -1,2 +1,3 @@
 rootProject.name = 'algs4'
 include 'playground'
+include 'collinear'
