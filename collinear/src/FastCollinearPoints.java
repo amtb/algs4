@@ -86,7 +86,7 @@ public class FastCollinearPoints {
       slopes[i] = listOfPoints[i].slopeTo(point);
     }
     return slopes;
-    }
+  }
 
   // validates that points doesn't contain a null value
   private void validateNotNull() {
