@@ -10,67 +10,86 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FastCollinearPoints {
+
+  private final Point[] points;
+
   // the segments
   private final LineSegment[] segments;
 
   // finds all line segments containing 4 points
   public FastCollinearPoints(Point[] points) {
-    validate(points);
-    Arrays.sort(points);
-    validateUniques(points);
-    this.segments = computeSegments(points.clone());
+    if (points == null) {
+      throw new IllegalArgumentException();
+    }
+    // make a copy
+    this.points = points.clone();
+    validateNotNull();
+
+    Arrays.sort(this.points);
+    validateUniques();
+    this.segments = computeSegments();
   }
 
   // computes the segments
-  private LineSegment[] computeSegments(Point[] points) {
+  private LineSegment[] computeSegments() {
     List<LineSegment> lineSegments = new ArrayList<>();
 
     for (int i = 0; i < points.length; i++) {
-      Point currentPoint = points[i];
-      Comparator<Point> currentPointComparator = currentPoint.slopeOrder();
-      Point[] remainingPoints = Arrays.copyOfRange(points, i + 1, points.length);
-      Arrays.sort(remainingPoints, currentPointComparator);
+      Point origin = points[i];
+      Comparator<Point> originSlopeOrder = origin.slopeOrder();
+
+      Point[] lowerPoints = Arrays.copyOfRange(points, 0, i);
+      Point[] upperPoints = Arrays.copyOfRange(points, i + 1, points.length);
+
+      Arrays.sort(lowerPoints, originSlopeOrder);
+      Arrays.sort(upperPoints, originSlopeOrder);
+
+      double[] lowerPointsSlopes = getSlopes(lowerPoints, origin);
 
       int j = 0;
-      while (j < remainingPoints.length) {
-        // look for adjacent points
-        int k = j + 1;
-        while (k < remainingPoints.length
-                && currentPointComparator.compare(remainingPoints[j], remainingPoints[k]) == 0) {
-          k++;
-        }
+      while (j < upperPoints.length) {
+        int k = findAlignedPoints(upperPoints, j, originSlopeOrder);
 
         // check if we have more than 3
         if (k - j >= 3) {
-          Point target = remainingPoints[k - 1];
+          Point end = upperPoints[k - 1];
+          double slope = origin.slopeTo(end);
 
           // check if there isn't a bigger segment
-          boolean shouldAdd = true;
-          for (int x = i - 1; x >= 0; x--) {
-            if (currentPointComparator.compare(points[x], target) == 0) {
-              shouldAdd = false;
-              break;
-            }
-          }
-
-          if (shouldAdd) {
-            lineSegments.add(new LineSegment(currentPoint, target));
+          if (Arrays.binarySearch(lowerPointsSlopes, slope) < 0) {
+            lineSegments.add(new LineSegment(origin, end));
           }
         }
 
+        // jump pointer
         j = k;
       }
     }
 
-    return lineSegments.toArray(new LineSegment[lineSegments.size()]);
+    return lineSegments.toArray(new LineSegment[0]);
+  }
+
+  // look for adjacent points in the upper points from start
+  private int findAlignedPoints(Point[] points, int start, Comparator<Point> originSlopeOrder) {
+    int k = start + 1;
+    while (k < points.length && originSlopeOrder.compare(points[start], points[k]) == 0) {
+      k++;
+    }
+
+    return k;
   }
 
   // validates that points is not null and doesn't contain a null value
-  private void validate(Point[] points) {
-    if (points == null) {
-      throw new IllegalArgumentException();
+  private double[] getSlopes(Point[] listOfPoints, Point point) {
+    double[] slopes = new double[listOfPoints.length];
+    for (int i = 0; i < listOfPoints.length; i++) {
+      slopes[i] = listOfPoints[i].slopeTo(point);
+    }
+    return slopes;
     }
 
+  // validates that points doesn't contain a null value
+  private void validateNotNull() {
     for (int i = 0; i < points.length; i++) {
       if (points[i] == null) {
         throw new IllegalArgumentException();
@@ -79,7 +98,7 @@ public class FastCollinearPoints {
   }
 
   // check if two successful points (sorted already) are not the same
-  private void validateUniques(Point[] points) {
+  private void validateUniques() {
     for (int i = 1; i < points.length; i++) {
       if (points[i - 1].compareTo(points[i]) == 0) {
         throw new IllegalArgumentException();
@@ -94,6 +113,6 @@ public class FastCollinearPoints {
 
   // the line segments
   public LineSegment[] segments() {
-    return Arrays.copyOf(segments, segments.length);
+    return segments.clone();
   }
 }

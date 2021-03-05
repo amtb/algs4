@@ -41,7 +41,7 @@ public class SortingTest {
   @Test
   @DisplayName("should sort faster")
   void speedTest() {
-    int size = (int) Math.pow(2, 8);
+    int size = (int) Math.pow(2, 16);
 
     long clock = System.currentTimeMillis();
     Merge.sort(RandomArray.generate(size));
