@@ -39,7 +39,7 @@ public class SortingTest {
   }
 
   @Test
-  @DisplayName("should sort faster")
+  @DisplayName("merge sort should sort faster than insertion sort")
   void speedTest() {
     int size = (int) Math.pow(2, 16);
 
@@ -52,6 +52,14 @@ public class SortingTest {
     long elapsedTimeInsertionSort = System.currentTimeMillis() - clock;
 
     assertEquals(elapsedTimeInsertionSort >= elapsedTimeMergeSort, true);
+  }
+
+  @ParameterizedTest
+  @MethodSource("randomArrays")
+  @DisplayName("should sort the arrays using quick sort")
+  void quickSort(Integer[] array) {
+    QuickSort.sort(array);
+    assertEquals(Utils.isSorted(array), true);
   }
 
   static Object[][] randomArrays() {
