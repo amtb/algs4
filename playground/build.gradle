@@ -34,3 +34,17 @@ dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.0'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
+
+task bouncingBalls(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'bouncing_balls.BouncingBalls'
+
+  // args "$projectDir/test-files/input6.txt"
+
+  debugOptions {
+     enabled = false
+     port = 5566
+     server = true
+     suspend = true
+  }
+}
