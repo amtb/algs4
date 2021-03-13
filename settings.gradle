@@ -1,3 +1,4 @@
 rootProject.name = 'algs4'
 include 'playground'
 include 'collinear'
+include '8puzzle'
