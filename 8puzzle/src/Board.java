@@ -75,22 +75,14 @@ public class Board {
       for (int j = 0; j < n; j++) {
         int tile = tiles[i][j];
         if (tile != 0) {
-          int r = getTileRow(tile);
-          int c = getTileColumn(tile);
+          int r = (tile - 1) / n;
+          int c = (tile - 1) % n;
           m += Math.abs(r - i) + Math.abs(c - j);
         }
       }
     }
 
     return m;
-  }
-
-  private int getTileRow(int tile) {
-    return (tile - 1) / n;
-  }
-
-  private int getTileColumn(int tile) {
-    return (tile - 1) % n;
   }
 
   // is this board the goal board?
