@@ -10,19 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
-  private Node root;
+  protected Node root;
 
-  private class Node {
+  protected class Node {
     Key key;
     Value value;
     Node left;
     Node right;
     int size;
+    boolean color;
 
     Node(Key k, Value v, int s) {
       key = k;
       value = v;
       size = s;
+    }
+
+    Node(Key k, Value v, int s, boolean c) {
+      this(k, v, s);
+      color = c;
     }
   }
 
@@ -31,7 +37,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     root = put(root, key, value);
   }
 
-  private Node put(Node node, Key key, Value value) {
+  protected Node put(Node node, Key key, Value value) {
     if (node == null) {
       return new Node(key, value, 1);
     }
@@ -57,7 +63,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     return size(root);
   }
 
-  private int size(Node node) {
+  protected int size(Node node) {
     if (node == null) {
       return 0;
     }
