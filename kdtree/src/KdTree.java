@@ -33,8 +33,6 @@ public class KdTree {
 
   private Node root;
 
-  private Point2D nearest;
-
   // construct an empty set of points
   public KdTree() {
   }
@@ -167,78 +165,98 @@ public class KdTree {
   // all points that are inside the rectangle (or on the boundary)
   public Iterable<Point2D> range(RectHV rect) {
     validate(rect);
-    List<Point2D> pointsInRange = new ArrayList<>();
-    searchPointsInRange(root, rect, pointsInRange);
-    return pointsInRange;
-  }
-
-  // search the points belonging to the rect in the subtrees of the given node
-  private void searchPointsInRange(Node node, RectHV rect, List<Point2D> pointsInRange) {
-    // shall we continue ?
-    if (node != null && node.rect.intersects(rect)) {
-      if (rect.contains(node.point)) {
-        pointsInRange.add(node.point);
-      }
-      searchPointsInRange(node.left, rect, pointsInRange);
-      searchPointsInRange(node.right, rect, pointsInRange);
-    }
+    return new FindPointsInRange(root, rect).pointsInRange;
   }
 
   // a nearest neighbor in the set to point p; null if the set is empty
   public Point2D nearest(Point2D p) {
     validate(p);
-    if (root == null) return null;
-
-    nearest = root.point;
-    searchNearestPoint(root, p, 0);
-    return nearest;
+    return new FindNearest(root, p).nearest;
   }
 
-  // search the nearest
-  private void searchNearestPoint(Node node, Point2D point, int level) {
-    List<Node> children = getOrderedChildren(node, point, level);
-    for (Node child : children) {
-      double distanceToChampion = nearest.distanceSquaredTo(point);
-      double distanceToSubtree = child.rect.distanceSquaredTo(point);
+  // Helper class that traverses the tree from the root to find the nearest point to p
+  private class FindNearest {
+    Point2D target;
+    Point2D nearest;
 
-      // is the current nearest further away ?
-      if (distanceToChampion > distanceToSubtree) {
-        double distanceToPoint = child.point.distanceSquaredTo(point);
-        if (distanceToChampion > distanceToPoint) {
-          nearest = child.point;
+    public FindNearest(Node root, Point2D p) {
+      target = p;
+      if (root != null) {
+        nearest = root.point;
+        searchNearestPoint(root, 0);
+      }
+    }
+
+    private void searchNearestPoint(Node node, int level) {
+      List<Node> children = getOrderedChildren(node, level);
+      for (Node child : children) {
+        double distanceToChampion = nearest.distanceSquaredTo(target);
+        double distanceToSubtree = child.rect.distanceSquaredTo(target);
+
+        // is the current nearest further away ?
+        if (distanceToChampion > distanceToSubtree) {
+          double distanceToPoint = child.point.distanceSquaredTo(target);
+          if (distanceToChampion > distanceToPoint) {
+            nearest = child.point;
+          }
+
+          searchNearestPoint(child, 1 + level);
         }
-
-        searchNearestPoint(child, point, 1 + level);
       }
+    }
+
+    // orders the children so that the first we will look into will have the highest probability
+    // of containing the nearest point
+    private List<Node> getOrderedChildren(Node node, int level) {
+      List<Node> children = new ArrayList<>();
+      if (node == null) return children;
+
+      Node left = node.left;
+      Node right = node.right;
+
+      if (left != null && right != null) {
+        // pick a side
+        if (compare(target, node, level) > 0) {
+          children.add(right);
+          children.add(left);
+        } else {
+          children.add(left);
+          children.add(right);
+        }
+      }
+      else if (left != null) {
+        children.add(left);
+      }
+      else if (right != null) {
+        children.add(right);
+      }
+
+      return children;
     }
   }
 
-  // orders the children so that the first we will look into will have the highest probability
-  // of containing the nearest point
-  private List<Node> getOrderedChildren(Node node, Point2D point, int level) {
-    List<Node> children = new ArrayList<>();
-    if (node == null) return children;
+  // Helper class that traverses the tree from the root and adds the points contained in the given rect
+  private class FindPointsInRange {
+    RectHV rect;
+    List<Point2D> pointsInRange;
 
-    Node left = node.left;
-    Node right = node.right;
+    public FindPointsInRange(Node root, RectHV r) {
+      rect = r;
+      pointsInRange = new ArrayList<>();
 
-    if (left != null && right != null) {
-      // pick a side
-      if (compare(point, node, level) > 0) {
-        children.add(right);
-        children.add(left);
-      } else {
-        children.add(left);
-        children.add(right);
+      searchPointsInRange(root);
+    }
+
+    // search the points belonging to the rect in the subtrees of the given node
+    private void searchPointsInRange(Node node) {
+      // shall we continue ?
+      if (node != null && node.rect.intersects(rect)) {
+        if (rect.contains(node.point)) {
+          pointsInRange.add(node.point);
+        }
+        searchPointsInRange(node.left);
+        searchPointsInRange(node.right);
       }
     }
-    else if (left != null) {
-      children.add(left);
-    }
-    else if (right != null) {
-      children.add(right);
-    }
-
-    return children;
   }
 }
