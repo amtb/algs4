@@ -9,7 +9,8 @@ package bst;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BinarySearchTreeTest {
@@ -52,7 +53,7 @@ public class BinarySearchTreeTest {
   void size() {
     BinarySearchTree<Integer, String> tree = new BinarySearchTree<>();
     assertEquals(0, tree.size());
-  
+
     tree.put(1, "one");
     assertEquals(1, tree.size());
 
@@ -85,12 +86,10 @@ public class BinarySearchTreeTest {
     tree.put("third", "three");
     tree.put("second", "two");
 
-    String[] keys = new String[tree.size()];
-    int i = 0;
-    for (String key : tree.iterator()) {
-      keys[i++] = key;
+    String[] expectedKeys = new String[] { "first", "second", "third" };
+    Iterator<String> keys = tree.iterator().iterator();
+    for (String expectedKey : expectedKeys) {
+      assertEquals(expectedKey, keys.next());
     }
-
-    assertArrayEquals(new String[] { "first", "second", "third" }, keys);
   }
 }
