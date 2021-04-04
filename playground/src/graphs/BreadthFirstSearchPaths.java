@@ -10,12 +10,12 @@ import edu.princeton.cs.algs4.Queue;
 
 public class BreadthFirstSearchPaths extends Paths {
 
-  public BreadthFirstSearchPaths(Graph g, int s) {
+  public BreadthFirstSearchPaths(AbstractGraph g, int s) {
     super(g, s);
     bfs(g);
   }
 
-  private void bfs(Graph g) {
+  private void bfs(AbstractGraph g) {
     // vertices to process in order (starting by the source)
     Queue<Integer> queue = new Queue<>();
     queue.enqueue(source);

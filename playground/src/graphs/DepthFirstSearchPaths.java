@@ -9,13 +9,13 @@ package graphs;
 public class DepthFirstSearchPaths extends Paths {
 
   // finds paths in the graph g from source s
-  public DepthFirstSearchPaths(Graph g, int s) {
+  public DepthFirstSearchPaths(AbstractGraph g, int s) {
     super(g, s);
     dfs(g, s);
   }
 
   // visits each neighbor of v in depth
-  private void dfs(Graph g, int v) {
+  private void dfs(AbstractGraph g, int v) {
     visited[v] = true;
     for (Integer neighbor : g.adj(v)) {
       if (!visited[neighbor]) {

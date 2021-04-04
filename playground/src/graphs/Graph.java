@@ -6,18 +6,10 @@
 
 package graphs;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Graph {
-
-  private List<Integer>[] adjacents;
+public class Graph extends AbstractGraph {
 
   public Graph(int V) {
-    adjacents = (List<Integer>[]) new List[V];
-    for (int i = 0; i < V; i++) {
-      adjacents[i] = new ArrayList<>();
-    }
+    super(V);
   }
 
   // adds an edge between v and w
@@ -26,23 +18,13 @@ public class Graph {
     adjacents[w].add(v);
   }
 
-  // return the adjacent vertices of v
-  public Iterable<Integer> adj(int v) {
-    return adjacents[v];
-  }
-
   // degree of v
   public static int degree(Graph g, int v) {
     int degree = 0;
-    for (Integer n: g.adj(v)) {
+    for (Integer n : g.adj(v)) {
       degree += 1;
     }
     return degree;
-  }
-
-  // the number of vertices
-  public int V() {
-    return adjacents.length;
   }
 
   // the number of edges
