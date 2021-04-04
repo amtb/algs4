@@ -18,7 +18,7 @@ public abstract class Paths {
   // was the vertex visited during the dfs run ?
   protected boolean[] visited;
 
-  protected Paths(Graph g, int s) {
+  protected Paths(AbstractGraph g, int s) {
     source = s;
     visited = new boolean[g.V()];
     paths = new Integer[g.V()];
