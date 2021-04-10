@@ -1,0 +1,59 @@
+plugins {
+  id 'java'
+  id 'com.adarshr.test-logger' version '2.1.1'
+}
+
+group 'org.algs4.wordnet'
+version '0.1'
+
+repositories {
+  jcenter()
+}
+
+test {
+  dependsOn cleanTest
+  useJUnitPlatform()
+  testLogging.showStandardStreams = true
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src']
+    }
+  }
+  test {
+    java {
+      srcDirs = ['test']
+    }
+  }
+}
+
+dependencies {
+  implementation files('../libs/algs4.jar')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.0'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+task zipIt(type: Zip) {
+    archiveFileName = "wordnet.zip"
+    destinationDirectory = file("$projectDir")
+
+    from "$projectDir/src"
+    include "WordNet.java", "SAP.java", "Outcast.java"
+}
+
+task run(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'Main'
+
+  args "$projectDir/test-files/synsets.txt", "$projectDir/test-files/hypernyms.txt"
+
+  debugOptions {
+     enabled = false
+     port = 5566
+     server = true
+     suspend = true
+  }
+}
